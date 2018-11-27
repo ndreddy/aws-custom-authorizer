@@ -33,4 +33,13 @@ AuthorizerFunctionHandler extends SpringBootRequestHandler which extends SpringF
 
 When a request is received, the handler will attempt to initialize the spring context.During initialization, it will look up the property function.name defined in the application.properties which is the name of function component bean that would of been discovered during component scanning.
 
+AWS Cognito Tokens
+------------------
+aws cognito-idp admin-initiate-auth --user-pool-id us-east-1_OpQZUjeDK --client-id 7amh5jk3tmdqjju7q5fvmq09ar --auth-flow ADMIN_NO_SRP_AUTH --auth-parameters USERNAME=SYSTEM_ADMIN,PASSWORD=Welcome_123
+    aws cognito-idp admin-respond-to-auth-challenge --user-pool-id us-east-1_OpQZUjeDK --client-id 7amh5jk3tmdqjju7q5fvmq09ar --challenge-name NEW_PASSWORD_REQUIRED --challenge-responses NEW_PASSWORD=Welcome_123,USERNAME=acb_admin --session ""
+
+Lambda Concurrency
+----------------
+    aws lambda put-function-concurrency --function-name sqs_consumer --reserved-concurrent-executions 25
+    
 
