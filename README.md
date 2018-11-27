@@ -40,6 +40,12 @@ aws cognito-idp admin-initiate-auth --user-pool-id us-east-1_OpQZUjeDK --client-
 
 Lambda Concurrency
 ----------------
-    aws lambda put-function-concurrency --function-name sqs_consumer --reserved-concurrent-executions 25
+aws lambda put-function-concurrency --function-name sqs_consumer --reserved-concurrent-executions 25
     
+Deploy Lambda via upload to S3
+------------------------------
+1. Copy jar to an S3 bucker
+aws s3 cp target/your-jar-SNAPSHOT-aws.jar s3://bucker-name/ --no-verify-ssl
+2. From console Funtion Code-> Code Entry Type -> Upload file from S3 -> enter url like 
+https://s3.amazonaws.com/<folder>/<jar-file-name.jar>
 
