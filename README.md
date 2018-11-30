@@ -1,4 +1,7 @@
 # aws-custom-authorizer
+
+Lambda Function Handler
+------------------------
 Configure Handler in the AWS console.
 
 - New lambda -> Function Code -> Handler ->com.ndrd.cloud.aws.AuthorizerFunctionHandler
@@ -9,6 +12,72 @@ Upload the jar to deploy the function
 The function code expects lambda env variables configured in 
 - CLIENTAPP_ID, POOL_ID, TOKEN_API
 
+API Gateway Authorizer Config
+-----------------------------
+API Gw > Your Api > Authorizers > Create New Authorizer > 
+Type: Lambda
+Lambda Invoke Role:arn:aws:iam::514xxxxx154:role/lambda_s3_full_role
+
+Specify an optional role API Gateway will use to make requests to your authorizer. For optimal API performance it is strongly recommended to activate Regional STS in the region where your API is located
+
+Lambda Event Payload: Token
+(Header containing auth token)
+Token Source:Authorization
+
+Example Authorizer Config
+--------------------------
+Name: custom-authorizer-token
+Authorizer ID: y6u3fp
+Lambda Function: custome-authorizer-function (us-east-1)
+Lambda Invoke Role: arn:aws:iam::514*******154:role/lambda_s3_full_role
+Lambda Event Payload:Token
+Token Source:Authorization
+Token Validation:none
+Authorization Caching
+Authorization cached for 5 minutes
+
+Lambda Invoke Role Config (lambda_s3_full_role)
+---------------------------------------------
+IAM > Roles > lambda_s3_full_role > Trust Relationships > Edit
+
+Go to the role in your IAM and select the “Trust Relationships” tab. From here edit the policy and for the Principal Service add in “apigateway.amazonaws.com” as seen below. This will grant the API Gateway the ability to assume roles to run your function in addition to the existing lambda permission.
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Service": [
+          "lambda.amazonaws.com",
+          "apigateway.amazonaws.com"
+        ]
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
+
+API Gateway - End point config
+---------------------------------
+APIs>Your API > Resources > /messages >POST - Method Execution
+ 
+1. Method Request
+Authorization: custom-authorizer-token  
+Request Validator: NONE  
+API Key Required: true 
+
+HTTP Request Headers
+X-API-Key : Required
+
+Others leave default
+
+2. Integration Request
+Integration type: Lambda Function
+Use Lambda Proxy integration: checked
+Lambda Function: inboundMessageHandler 
+
+Packages
+---------
 com.ndrd.cloud.aws package
  - Contains AuthorizerHandler function.
 
